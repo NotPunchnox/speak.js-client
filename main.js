@@ -10,7 +10,6 @@ app.use(require('body-parser').urlencoded({
   extended: false
 }))
 app.use(require('body-parser').json())
-app.use(require('cors')())
 
 var serveur = "speakjs.herokuapp.com"
 
