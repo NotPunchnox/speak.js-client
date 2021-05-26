@@ -10,9 +10,10 @@
   "author": "punchnox",
   "license": "ISC",
   "dependencies": {
-    "cors": "^2.8.5",
+    "ejs": "^3.1.6",
     "cryptr": "^6.0.2",
     "express": "^4.17.1",
-    "socket.io": "^4.1.2"
+    "ws": "^7.4.6",
+    "request": "^2.88.2"
   }
 }
