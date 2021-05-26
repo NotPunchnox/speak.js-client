@@ -71,7 +71,7 @@
   var server = 'speakjs.herokuapp.com',
     socket = null
   try {
-    socket = new WebSocket('ws://' + server)
+    socket = new WebSocket('wss://' + server)
   } catch (e) {
     new Error(e)
   }
