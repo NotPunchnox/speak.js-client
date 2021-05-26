@@ -1,6 +1,6 @@
 const app = require('express')(),
-  request = require('request')
-server = require('http').Server(app),
+  request = require('request'),
+  server = require('http').Server(app),
   wss = require('ws'),
   cryptr = require('cryptr')
 require('ejs')
@@ -10,6 +10,7 @@ app.use(require('body-parser').urlencoded({
   extended: false
 }))
 app.use(require('body-parser').json())
+app.use(require('cors')())
 
 var serveur = "speakjs.herokuapp.com"
 
