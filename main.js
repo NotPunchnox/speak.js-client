@@ -12,7 +12,7 @@ app.use(require('body-parser').urlencoded({
 }))
 app.use(require('body-parser').json())
 app.use(require('cors')())
-app.use(session({ secret: 'sltcv', resave: true, saveUninitialized: true }))
+app.use(session({ secret: process.env.key, resave: true, saveUninitialized: true }))
 
 var serveur = "speakjs.herokuapp.com",
   makeid = function (length) {
