@@ -24,14 +24,14 @@ var serveur = "speakjs.herokuapp.com",
     return r.join('')
   }
 app.get('/', (req, res) => {
-  /*
   if(!req.query.guild) req.session.guild = serveur
   if(req.query.guild !== null && req.query.guild.startsWith('http://' || 'https://' || 'ws://' || 'wss://')) {
     req.session.guild = req.query.guild.replace('http://' || 'https://' || 'ws://' || 'wss://', '')
     return res.status(203).json({ status: true, code: 203, message: req.session.guild })
   }
-  */
+  /*
   if(!req.query.guild) { req.session.guild = serveur }
+*/
   req.session.avatar = `https://api.multiavatar.com/${makeid(10)}.svg`
   var arr = [],
     users,
