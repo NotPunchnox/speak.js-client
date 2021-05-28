@@ -2,7 +2,8 @@ const app = require('express')(),
   request = require('request'),
   server = require('http').Server(app),
   wss = require('ws'),
-  cryptr = require('cryptr')
+  cryptr = require('cryptr'),
+  session = require('express-session')
 require('ejs')
 
 app.set('view engine', 'ejs')
@@ -11,10 +12,27 @@ app.use(require('body-parser').urlencoded({
 }))
 app.use(require('body-parser').json())
 app.use(require('cors')())
+app.use(session({ secret: 'sltcv', resave: true, saveUninitialized: true }))
 
-var serveur = "speakjs.herokuapp.com"
-
+var serveur = "speakjs.herokuapp.com",
+  makeid = function (length) {
+    var r = []
+    var c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    for (var i = 0; i < length; i++) {
+      r.push(c.charAt(Math.floor(Math.random() * c.length)))
+    }
+    return r.join('')
+  }
 app.get('/', (req, res) => {
+  /*
+  if(!req.query.guild) req.session.guild = serveur
+  if(req.query.guild !== null && req.query.guild.startsWith('http://' || 'https://' || 'ws://' || 'wss://')) {
+    req.session.guild = req.query.guild.replace('http://' || 'https://' || 'ws://' || 'wss://', '')
+    return res.status(203).json({ status: true, code: 203, message: req.session.guild })
+  }
+  */
+  if(!req.query.guild) { req.session.guild = serveur }
+  req.session.avatar = `https://api.multiavatar.com/${makeid(10)}.svg`
   var arr = [],
     users,
     msg
@@ -23,16 +41,22 @@ app.get('/', (req, res) => {
     users = b.users
     msg = b.msg
 
-      b.msg.forEach(a => {
-        arr.push({
-          username: a.username,
-          content: new cryptr(String(a.expire)).decrypt(a.content),
-          color: a.color,
-          CreatedAt: a.CreatedAt,
-          expire: a.expire
-        })
+    b.msg.forEach(a => {
+      console.log(a)
+      arr.push({
+        username: a.username,
+        content: new cryptr(String(a.expire)).decrypt(a.content),
+        color: a.color,
+        CreatedAt: a.CreatedAt,
+        avatar: a.avatar || null,
+        expire: a.expire
       })
+    })
     res.render('main', {
+      user: {
+        avatar: req.session.avatar,
+        guild: req.session.guild
+      },
       data: {
         msg: JSON.stringify(arr),
         users: users,

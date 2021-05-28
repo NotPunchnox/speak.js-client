@@ -45,19 +45,52 @@
       color: #fff;
     }
 
-    #messages {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-    }
+    .container {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 10px;
+  margin: 10px 0;
+}
 
-    #messages>li {
-      padding: 0.5rem 1rem;
-    }
+.darker {
+  border-color: #ccc;
+  background-color: #ddd;
+}
 
-    #messages>li:nth-child(odd) {
-      background: #efefef;
-    }
+.container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+/* Style images */
+.container img {
+  float: left;
+  max-width: 60px;
+  width: 100%;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+
+/* Style the right image */
+.container img.right {
+  float: right;
+  margin-left: 20px;
+  margin-right:0;
+}
+
+/* Style time text */
+.time-right {
+  float: right;
+  color: #aaa;
+}
+
+/* Style time text */
+.time-left {
+  float: left;
+  color: #999;
+}
   </style>
 </head>
 
@@ -68,10 +101,10 @@
   </form>
 </body>
 <script>
-  var server = 'speakjs.herokuapp.com',
+  var server = '<%=user.guild%>',
     socket = null
   try {
-    socket = new WebSocket('wss://' + server)
+    socket = new WebSocket('ws://' + server)
   } catch (e) {
     new Error(e)
   }
@@ -83,11 +116,11 @@
   }
   socket.onopen = function (e) {
     console.log('connexion établie avec succes')
-
     function getmsg() {
+      console.log(JSON.parse('<%-data.msg%>'))
       JSON.parse('<%-data.msg%>').slice(Number('<%=data.number%>') < 20 ? 0 : -20).forEach(a => {
-        var item = document.createElement('li')
-        item.textContent = `${a.username}  ${a.CreatedAt}:\n${a.content}`
+        var item = document.createElement('div')
+        item.innerHTML = `<div class="container darker"><img src="${a.avatar || 'https://api.multiavatar.com/error.svg'}" alt="Avatar"><p>${a.username}:\n${a.content}</p><span class="time-left">${a.CreatedAt}</span></div>`
         messages.appendChild(item)
         window.scrollTo(0, document.body.scrollHeight)
       })
@@ -96,6 +129,7 @@
 
     socket.onmessage = function (m) {
       let e = JSON.parse(m.data)
+      console.log(e)
       var request = new Request('/decrypte', {
         method: 'POST',
         body: JSON.stringify({
@@ -108,7 +142,7 @@
       })
       fetch(request).then(resp => resp.json().then(r => {
         var item = document.createElement('li')
-        item.textContent = `${e.username}  ${e.date}:\n${r.content}`
+        item.innerHTML = `<div class="container darker"><img src="${e.avatar || 'https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png'}" alt="Avatar"><p>${e.username}:\n${r.content}</p><span class="time-left">${e.date}</span></div>`
         messages.appendChild(item)
         window.scrollTo(0, document.body.scrollHeight)
       })).catch(err => console.error(err))
@@ -135,6 +169,7 @@
             username: "punchnox client web",
             content: r.content,
             event: 'msg',
+            avatar: '<%=user.avatar%>',
             expire: ch
           }))
         })).catch(err => console.error(err))
