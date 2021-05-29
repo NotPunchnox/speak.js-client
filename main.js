@@ -7,36 +7,34 @@ const app = require('express')(),
 require('ejs')
 
 app.set('view engine', 'ejs')
-app.use(require('body-parser').urlencoded({
-  extended: false
-}))
+app.use(require('body-parser').urlencoded({extended: false}))
 app.use(require('body-parser').json())
 app.use(require('cors')())
+app.use(require('express').static(__dirname + '/public'));
+process.env.key = 'hey'
 app.use(session({ secret: process.env.key, resave: true, saveUninitialized: true }))
 
-var serveur = "speakjs.herokuapp.com",
-  makeid = function (length) {
-    var r = []
-    var c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-    for (var i = 0; i < length; i++) {
-      r.push(c.charAt(Math.floor(Math.random() * c.length)))
-    }
-    return r.join('')
-  }
+var serveur = "speakjs.herokuapp.com"
+
 app.get('/', (req, res) => {
-  if(!req.query.guild) req.session.guild = serveur
-  if(req.query.guild !== null && req.query.guild.startsWith('http://' || 'https://' || 'ws://' || 'wss://')) {
+  if(!req.query.guild) {req.session.guild = serveur}
+  if(req.query.guild !== undefined && req.query.guild.startsWith('http://' || 'https://' || 'ws://' || 'wss://')) {
     req.session.guild = req.query.guild.replace('http://' || 'https://' || 'ws://' || 'wss://', '')
     return res.status(203).json({ status: true, code: 203, message: req.session.guild })
   }
-  /*
-  if(!req.query.guild) { req.session.guild = serveur }
-*/
-  req.session.avatar = `https://api.multiavatar.com/${makeid(10)}.svg`
+  if(req.query.guild) {
+    req.session.guild = req.query.guild
+  }
+  req.session.username = req.query.username || 'nothing'
+  req.session.avatar = `https://api.multiavatar.com/${req.session.username}.svg`
   var arr = [],
     users,
     msg
-  request.get(`https://${serveur}/message`, (e, r) => {
+    console.log(req.session.guild)
+  request.get(`https://${req.session.guild}/message`, (e, r) => {
+    if(e) return res.status(503).json({status: false, code: 503, error: e})
+    if(r.statusCode !== 203) return res.status(503).json({ status: false, code: 503, 'code-request': r.statusCode })
+    console.log(r)
     var b = JSON.parse(r.body)
     users = b.users
     msg = b.msg
@@ -54,6 +52,7 @@ app.get('/', (req, res) => {
     })
     res.render('main', {
       user: {
+        username: req.session.username,
         avatar: req.session.avatar,
         guild: req.session.guild
       },
@@ -64,6 +63,10 @@ app.get('/', (req, res) => {
       }
     })
   })
+})
+
+app.get('/test', (req, res)=> {
+  res.render('test')
 })
 
 app.post('/crypte', (req, res) => {

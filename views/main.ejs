@@ -3,105 +3,83 @@
 
 <head>
   <title>Speak.js</title>
-  <style>
-    body {
-      margin: 0;
-      padding-bottom: 3rem;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    #form {
-      background: rgba(0, 0, 0, 0.15);
-      padding: 0.25rem;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      height: 3rem;
-      box-sizing: border-box;
-      backdrop-filter: blur(10px);
-    }
-
-    #input {
-      border: none;
-      padding: 0 1rem;
-      flex-grow: 1;
-      border-radius: 2rem;
-      margin: 0.25rem;
-    }
-
-    #input:focus {
-      outline: none;
-    }
-
-    #form>button {
-      background: #333;
-      border: none;
-      padding: 0 1rem;
-      margin: 0.25rem;
-      border-radius: 3px;
-      outline: none;
-      color: #fff;
-    }
-
-    .container {
-  border: 2px solid #dedede;
-  background-color: #f1f1f1;
-  border-radius: 5px;
-  padding: 10px;
-  margin: 10px 0;
-}
-
-.darker {
-  border-color: #ccc;
-  background-color: #ddd;
-}
-
-.container::after {
-  content: "";
-  clear: both;
-  display: table;
-}
-
-/* Style images */
-.container img {
-  float: left;
-  max-width: 60px;
-  width: 100%;
-  margin-right: 20px;
-  border-radius: 50%;
-}
-
-/* Style the right image */
-.container img.right {
-  float: right;
-  margin-left: 20px;
-  margin-right:0;
-}
-
-/* Style time text */
-.time-right {
-  float: right;
-  color: #aaa;
-}
-
-/* Style time text */
-.time-left {
-  float: left;
-  color: #999;
-}
-  </style>
+  <link href="/css/style.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
-  <ul id="messages"></ul>
-  <form id="form" action="">
-    <input id="input" autocomplete="off" /><button>Send</button>
-  </form>
+  <div class="container-fluid h-100">
+    <div class="row justify-content-center h-100">
+      <div class="col-md-4 col-xl-3 chat">
+        <div class="card2 mb-sm-3 mb-md-0 contacts_card">
+          <div class="card-header">
+            <div class="input-group">
+              <input type="text" placeholder="Search..." name="" class="form-control search">
+              <div class="input-group-prepend">
+                <span class="input-group-text search_btn"><i class="fas fa-search"></i></span>
+              </div>
+            </div>
+          </div>
+          <div class="card-body contacts_body">
+            <ui class="contacts">
+              <li class="active" id='users'>
+                <div class="d-flex bd-highlight">
+                  <div class="img_cont">
+                    <img src="https://i.pinimg.com/originals/7c/e8/d6/7ce8d6c44b056a3e9eb84d31139f4132.png"
+                      class="rounded-circle user_img">
+                    <span class="online_icon"></span>
+                  </div>
+                  <div class="user_info">
+                    <span>SYSTEME 🤖</span>
+                    <p>online</p>
+                  </div>
+                </div>
+              </li>
+            </ui>
+          </div>
+          <div class="card-footer"></div>
+        </div>
+      </div>
+      <div class="col-md-8 col-xl-6 chat">
+        <div class="card">
+          <div class="card-header msg_head">
+            <div class="d-flex bd-highlight">
+            </div>
+            <span id="action_menu_btn"><i class="fas fa-ellipsis-v"></i></span>
+            <div class="action_menu">
+              <ul>
+                <li><i class="fas fa-user-circle"></i> View profile</li>
+                <li><i class="fas fa-users"></i> Add to close friends</li>
+                <li><i class="fas fa-plus"></i> Add to group</li>
+                <li><i class="fas fa-ban"></i> Block</li>
+              </ul>
+            </div>
+          </div>
+          <div class="card-body msg_card_body">
+            <div class="d-flex justify-content-start mb-4">
+              <ul style="padding-left: 5px;" id="messages"></ul>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="input-group">
+              <div class="input-group-append">
+                <span class="input-group-text attach_btn"><i class="fas fa-paperclip"></i></span>
+              </div>
+              <input name="" class="form-control type_msg" id="input" autocomplete="off"
+                placeholder="Type your message..." />
+              <div class="input-group-append">
+                <button style="border: none;outline-style: none;"
+                  class="fas fa-location-arrow input-group-text send_btn" id="send">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 <script>
   var server = '<%=user.guild%>',
+  username = '<%=user.username%>'
     socket = null
   try {
     socket = new WebSocket('ws://' + server)
@@ -116,11 +94,27 @@
   }
   socket.onopen = function (e) {
     console.log('connexion établie avec succes')
+    socket.send(JSON.stringify({
+      username: username,
+      event: 'new',
+      avatar: '<%=user.avatar%>' || 'https://api.multiavatar.com/error.svg'
+    }))
     function getmsg() {
-      console.log(JSON.parse('<%-data.msg%>'))
-      JSON.parse('<%-data.msg%>').slice(Number('<%=data.number%>') < 20 ? 0 : -20).forEach(a => {
+      console.log(JSON.parse(JSON.stringify( <%-data.msg %> )))
+      JSON.parse(JSON.stringify( <%-data.msg%> )).slice(Number('<%=data.number%>') < 20 ? 0 : -20).forEach(a => {
         var item = document.createElement('div')
-        item.innerHTML = `<div class="container darker"><img src="${a.avatar || 'https://api.multiavatar.com/error.svg'}" alt="Avatar"><p>${a.username}:\n${a.content}</p><span class="time-left">${a.CreatedAt}</span></div>`
+        item.innerHTML = `
+        <div class="d-flex justify-content-start mb-4">
+          <div class="img_cont_msg">
+            <img src="${a.avatar || 'https://api.multiavatar.com/error.svg'}"
+            class="rounded-circle user_img_msg">
+            </div>
+            <div class="msg_cotainer">
+              ${a.content}
+              <span class="msg_time">${a.CreatedAt}</span>
+            </div>
+          </div>
+        `
         messages.appendChild(item)
         window.scrollTo(0, document.body.scrollHeight)
       })
@@ -141,16 +135,62 @@
         })
       })
       fetch(request).then(resp => resp.json().then(r => {
-        var item = document.createElement('li')
-        item.innerHTML = `<div class="container darker"><img src="${e.avatar || 'https://cdn.business2community.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png'}" alt="Avatar"><p>${e.username}:\n${r.content}</p><span class="time-left">${e.date}</span></div>`
-        messages.appendChild(item)
-        window.scrollTo(0, document.body.scrollHeight)
+        console.log(e)
+        if (e.event == 'msg') {
+          var item = document.createElement('div')
+          item.innerHTML = `
+        <div class="d-flex justify-content-start mb-4">
+          <div class="img_cont_msg">
+            <img src="${e.avatar || 'https://api.multiavatar.com/error.svg'}"
+            class="rounded-circle user_img_msg">
+            </div>
+            <div class="msg_cotainer">
+              ${r.content}
+              <span class="msg_time">${e.date}</span>
+            </div>
+          </div>
+        `
+          messages.appendChild(item)
+          window.scrollTo(0, document.body.scrollHeight)
+        } else if (e.event == 'new') {
+          var element = document.createElement('div')
+          element.innerHTML = `
+          <div style="margin-top: 5px;" class="d-flex bd-highlight">
+            <div class="img_cont">
+              <img src="${e.avatar || 'https://api.multiavatar.com/error.svg'}"
+                class="rounded-circle user_img">
+              <span class="online_icon"></span>
+            </div>
+            <div class="user_info">
+              <span>${e.user}</span>
+              <p>online</p>
+            </div>
+          </div>
+          `
+          document.getElementById('users').appendChild(element)
+          window.scrollTo(0, document.body.scrollHeight)
+          var item = document.createElement('div')
+          item.innerHTML = `
+        <div class="d-flex justify-content-start mb-4">
+          <div class="img_cont_msg">
+            <img src="https://i.pinimg.com/originals/7c/e8/d6/7ce8d6c44b056a3e9eb84d31139f4132.png"
+            class="rounded-circle user_img_msg">
+            </div>
+            <div class="msg_cotainer">
+              ${r.content}
+              <span class="msg_time">${e.date}</span>
+            </div>
+          </div>
+        `
+          messages.appendChild(item)
+          window.scrollTo(0, document.body.scrollHeight)
+        }
       })).catch(err => console.error(err))
     }
 
     var input = document.getElementById('input')
 
-    document.getElementById('form').addEventListener('submit', function (e) {
+    document.getElementById('send').addEventListener('click', function (e) {
       e.preventDefault();
       if (input.value) {
         let ch = Date.now() + 1800000 / 2.3 * 5.5
@@ -166,7 +206,7 @@
         })
         fetch(request).then(resp => resp.json().then(r => {
           socket.send(JSON.stringify({
-            username: "punchnox client web",
+            username: username,
             content: r.content,
             event: 'msg',
             avatar: '<%=user.avatar%>',
