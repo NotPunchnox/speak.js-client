@@ -167,7 +167,7 @@ function htmlEncode(str){
               <span class="online_icon"></span>
             </div>
             <div class="user_info">
-              <span>${e.user}</span>
+              <span>${htmlEncode(e.user)}</span>
               <p>online</p>
             </div>
           </div>
@@ -182,7 +182,7 @@ function htmlEncode(str){
             class="rounded-circle user_img_msg">
             </div>
             <div class="msg_cotainer">
-              ${r.content}
+              ${htmlEncode(r.content)}
               <span class="msg_time">${e.date}</span>
             </div>
           </div>
