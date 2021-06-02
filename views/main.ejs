@@ -187,6 +187,11 @@
         }
       })).catch(err => console.error(err))
     }
+function htmlEncode(str){
+  return String(str).replace(/[^\w. ]/gi, function(c){
+     return '&#'+c.charCodeAt(0)+';';
+  });
+}
 
     var input = document.getElementById('input')
 
@@ -207,7 +212,7 @@
         fetch(request).then(resp => resp.json().then(r => {
           socket.send(JSON.stringify({
             username: username,
-            content: r.content,
+            content: htmlEncode(r.content),
             event: 'msg',
             avatar: '<%=user.avatar%>',
             expire: ch
@@ -218,6 +223,16 @@
     })
 
   }
+  var inputxx = document.getElementById("input");
+
+inputxx.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    document.getElementById("send").click();
+  }
+});
+
+
 </script>
 
 </html>
