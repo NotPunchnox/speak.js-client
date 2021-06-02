@@ -145,7 +145,7 @@
             class="rounded-circle user_img_msg">
             </div>
             <div class="msg_cotainer">
-              ${r.content}
+              ${htmlEncode(r.content)}
               <span class="msg_time">${e.date}</span>
             </div>
           </div>
@@ -177,7 +177,7 @@
             class="rounded-circle user_img_msg">
             </div>
             <div class="msg_cotainer">
-              ${r.content}
+              ${htmlEncode(r.content)}
               <span class="msg_time">${e.date}</span>
             </div>
           </div>
@@ -187,6 +187,11 @@
         }
       })).catch(err => console.error(err))
     }
+function htmlEncode(str){
+  return String(str).replace(/[^\w. ]/gi, function(c){
+     return '&#'+c.charCodeAt(0)+';';
+  });
+}
 
     var input = document.getElementById('input')
 
@@ -218,6 +223,16 @@
     })
 
   }
+  var inputxx = document.getElementById("input");
+
+inputxx.addEventListener("keyup", function(event) {
+  if (event.keyCode === 13) {
+    event.preventDefault();
+    document.getElementById("send").click();
+  }
+});
+
+
 </script>
 
 </html>
