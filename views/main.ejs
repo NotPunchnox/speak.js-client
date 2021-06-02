@@ -79,7 +79,7 @@
 <script>
 function htmlEncode(str){
   return String(str).replace(/[^\w. ]/gi, function(c){
-     return '&#'+c.charCodeAt(0)+';';
+     return '&#'+c.charCodeAt(0)+';'
   });
 }
 
@@ -150,7 +150,7 @@ function htmlEncode(str){
             class="rounded-circle user_img_msg">
             </div>
             <div class="msg_cotainer">
-              ${r.content}
+              ${String(r.content)}
               <span class="msg_time">${e.date}</span>
             </div>
           </div>
