@@ -77,6 +77,12 @@
   </div>
 </body>
 <script>
+function htmlEncode(str){
+  return String(str).replace(/[^\w. ]/gi, function(c){
+     return '&#'+c.charCodeAt(0)+';';
+  });
+}
+
   var server = '<%=user.guild%>',
   username = '<%=user.username%>'
     socket = null
@@ -109,7 +115,7 @@
             class="rounded-circle user_img_msg">
             </div>
             <div class="msg_cotainer">
-              ${a.content}
+              ${htmlEncode(a.content)}
               <span class="msg_time">${a.CreatedAt}</span>
             </div>
           </div>
@@ -186,11 +192,7 @@
         }
       })).catch(err => console.error(err))
     }
-function htmlEncode(str){
-  return String(str).replace(/[^\w. ]/gi, function(c){
-     return '&#'+c.charCodeAt(0)+';';
-  });
-}
+
 
     var input = document.getElementById('input')
 
