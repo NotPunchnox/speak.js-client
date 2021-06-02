@@ -145,7 +145,7 @@
             class="rounded-circle user_img_msg">
             </div>
             <div class="msg_cotainer">
-              ${r.content}
+              ${htmlEncode(r.content)}
               <span class="msg_time">${e.date}</span>
             </div>
           </div>
@@ -177,7 +177,7 @@
             class="rounded-circle user_img_msg">
             </div>
             <div class="msg_cotainer">
-              ${r.content}
+              ${htmlEncode(r.content)}
               <span class="msg_time">${e.date}</span>
             </div>
           </div>
@@ -212,7 +212,7 @@ function htmlEncode(str){
         fetch(request).then(resp => resp.json().then(r => {
           socket.send(JSON.stringify({
             username: username,
-            content: htmlEncode(r.content),
+            content: r.content,
             event: 'msg',
             avatar: '<%=user.avatar%>',
             expire: ch
