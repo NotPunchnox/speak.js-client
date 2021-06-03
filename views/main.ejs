@@ -77,11 +77,11 @@
   </div>
 </body>
 <script>
-function htmlEncode(s){
-  return String(s).replace(/[^\w. ]/gi, function(c){
-     return '&#'+c.charCodeAt(0)+';'
-  });
-}
+String.prototype.toHtmlEntities = function() {
+    return this.replace(/./gm, function(s) {
+        return (s.match(/[a-z0-9\s]+/i)) ? s : "&#" + s.charCodeAt(0) + ";";
+    });
+};
 
   var server = '<%=user.guild%>',
   username = '<%=user.username%>'
@@ -115,7 +115,7 @@ function htmlEncode(s){
             class="rounded-circle user_img_msg">
             </div>
             <div class="msg_cotainer">
-              ${a.content}
+              ${a.content.toHtmlEntities()}
               <span class="msg_time">${a.CreatedAt}</span>
             </div>
           </div>
