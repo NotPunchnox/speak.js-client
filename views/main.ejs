@@ -204,7 +204,7 @@ function htmlEncode(s){
           method: 'POST',
           body: JSON.stringify({
             'key': String(ch),
-            'chaine': input.value
+            'chaine': htmlEncode(input.value)
           }),
           headers: new Headers({
             'Content-Type': 'application/json'
@@ -213,7 +213,7 @@ function htmlEncode(s){
         fetch(request).then(resp => resp.json().then(r => {
           socket.send(JSON.stringify({
             username: username,
-            content: htmlEncode(r.content),
+            content: r.content,
             event: 'msg',
             avatar: '<%=user.avatar%>',
             expire: ch
