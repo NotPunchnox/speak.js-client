@@ -115,7 +115,7 @@ function htmlEncode(s){
             class="rounded-circle user_img_msg">
             </div>
             <div class="msg_cotainer">
-              ${htmlEncode(a.content)}
+              ${a.content}
               <span class="msg_time">${a.CreatedAt}</span>
             </div>
           </div>
@@ -150,7 +150,7 @@ function htmlEncode(s){
             class="rounded-circle user_img_msg">
             </div>
             <div class="msg_cotainer">
-              ${htmlEncode(r.content)}
+              ${r.content}
               <span class="msg_time">${e.date}</span>
             </div>
           </div>
@@ -167,7 +167,7 @@ function htmlEncode(s){
               <span class="online_icon"></span>
             </div>
             <div class="user_info">
-              <span>${htmlEncode(e.user)}</span>
+              <span>${e.user}</span>
               <p>online</p>
             </div>
           </div>
@@ -182,7 +182,7 @@ function htmlEncode(s){
             class="rounded-circle user_img_msg">
             </div>
             <div class="msg_cotainer">
-              ${htmlEncode(r.content)}
+              ${r.content}
               <span class="msg_time">${e.date}</span>
             </div>
           </div>
@@ -204,7 +204,7 @@ function htmlEncode(s){
           method: 'POST',
           body: JSON.stringify({
             'key': String(ch),
-            'chaine': htmlEncode(input.value)
+            'chaine': input.value
           }),
           headers: new Headers({
             'Content-Type': 'application/json'
